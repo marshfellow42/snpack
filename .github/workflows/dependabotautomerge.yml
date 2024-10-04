@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
 
       - name: run unit tests
-        run: echo "unit test passed"
+        run: ./gradlew test
 
   auto-merge-dependabot:
     name: 🤖 Auto merge dependabot PR
