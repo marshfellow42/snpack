@@ -29,15 +29,12 @@ jobs:
   auto-merge-dependabot:
     name: Auto Merge Dependabot PRs
     needs: run-unit-tests
-    runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' && success() }}
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Merge PR from Dependabot
         uses: fastify/github-action-merge-dependabot@v3.10.2
         with:
@@ -48,15 +45,12 @@ jobs:
   close-failed-dependabot:
     name: Close Failed Dependabot PRs
     needs: run-unit-tests
-    runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' && !success() }}
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Close PR
         run: gh pr close "$NUMBER" --comment "$COMMENT"
         env:
