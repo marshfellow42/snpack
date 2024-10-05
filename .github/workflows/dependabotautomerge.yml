@@ -30,7 +30,7 @@ jobs:
     name: Auto Merge Dependabot PRs
     timeout-minutes: 10
     needs: [run-unit-tests]
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.actor == 'dependabot[bot]' && success() }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -40,5 +40,5 @@ jobs:
         uses: fastify/github-action-merge-dependabot@v3.10.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          target: minor
+          target: any
           merge-method: rebase
