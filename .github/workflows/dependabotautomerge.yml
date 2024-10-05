@@ -21,7 +21,7 @@ jobs:
           java-version: '17'
 
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew test --scan
 
   auto-merge-dependabot:
     name: Auto Merge Dependabot PRs
