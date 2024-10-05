@@ -1,14 +1,16 @@
-name: automatically merge dependabot PR's
+name: Automatically Merge Dependabot PRs
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  run-unit-test:
-    name: run unit test
+  run-unit-tests:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -18,20 +20,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: run unit tests
+      - name: Run Unit Tests
         run: ./gradlew test
 
   auto-merge-dependabot:
-    name: 🤖 Auto merge dependabot PR
+    name: Auto Merge Dependabot PRs
     timeout-minutes: 10
-    needs: [ run-unit-test ]
+    needs: [run-unit-tests]
     if: ${{ github.actor == 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     steps:
-      - name: 🤖 Merge PR from dependabot
+      - name: Merge PR from Dependabot
         uses: fastify/github-action-merge-dependabot@v3.10.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
