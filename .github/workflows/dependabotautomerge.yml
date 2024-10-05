@@ -28,17 +28,40 @@ jobs:
 
   auto-merge-dependabot:
     name: Auto Merge Dependabot PRs
-    timeout-minutes: 10
-    needs: [run-unit-tests]
-    if: ${{ github.actor == 'dependabot[bot]' && success() }}
+    needs: run-unit-tests
     runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' && success() }}
     permissions:
       pull-requests: write
       contents: write
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Merge PR from Dependabot
         uses: fastify/github-action-merge-dependabot@v3.10.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           target: any
           merge-method: rebase
+
+  close-failed-dependabot:
+    name: Close Failed Dependabot PRs
+    needs: run-unit-tests
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' && !success() }}
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Close PR
+        run: gh pr close "$NUMBER" --comment "$COMMENT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.number }}
+          COMMENT: >
+            This pull request was closed due to the unit tests failing.
